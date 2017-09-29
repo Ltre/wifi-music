@@ -29,6 +29,6 @@ function scan($dir){
     return $map;
 }
 
-$map = scan('C:/Users/Administrator/tmp/wifi-music/sdcard');
+$map = scan('D:/SERV_WORKSPACE/WebstormProjects/wifi-music/sdcard');
 file_put_contents('list.json', json_encode($map));
 echo json_encode(['map' => $map, 'len' => count($map)]);
