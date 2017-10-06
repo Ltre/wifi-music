@@ -38,21 +38,42 @@
             var map = {};
             var len = 0;
             var histo = [];
-            $.getJSON('/list.php', function(j){
+            $.getJSON('/list.php', (j) => {
                 map = j.map;
                 len = j.len;
                 // $.each(j, (i, e) => {
                 // });
             });
-            $('#xia').click((evt) => {
+
+            //播放新曲目
+            function newSong(evt){
                 var i = 0;
                 var r = Math.floor(Math.random()*len);
                 for (var k in map) {
                     if (i == r) {
                         $('audio').attr('src', '/src.php?k='+k);
                         $('audio').get(0).play();
+                        histo.push(k);
                     }
                     i ++;
+                }
+            }
+
+            $('#xia').click(newSong);
+            $('#bofang').click((evt) => {
+                if (histo.length == 0) {
+                    debugger;
+                    newSong(evt);
+                    return;
+                }
+                if ($(this).data('playing') == 1) {
+                    $(this).text('点击播放');
+                    $(this).data('playing', 0);
+                    $('audio').pause();
+                } else {
+                    $(this).text('点击暂停');
+                    $(this).data('playing', 1);
+                    $('audio').play();
                 }
             });
         });

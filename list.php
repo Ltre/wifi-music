@@ -5,7 +5,7 @@ ob_start();
 date_default_timezone_set('PRC');
 session_start();
 
-//递归方式（DFS)
+//递归方式（DFS), 对于手机上千上万目录的扫描完全无力
 function scan($dir){
     $map = [];
     preg_match('/\/$/', $dir) OR $dir .= '/';
@@ -30,7 +30,7 @@ function scan($dir){
     return $map;
 }
 
-//非递归 (BFS)
+//非递归 (BFS)，可在十几秒内完成扫描手机上千上万目录
 function scan2($dir){
     $map = [];
     $queue = [];
