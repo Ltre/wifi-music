@@ -60,6 +60,7 @@ function scan2($dir){
 }
 
 // $map = scan('D:/SERV_WORKSPACE/WebstormProjects/wifi-music/sdcard');
-$map = scan2('/Users/Ltre/mydir/projects/wifi-music/sdcard');
+// $map = scan2('/Users/Ltre/mydir/projects/wifi-music/sdcard');
+$map = scan2('/storage/emulated/0');
 file_put_contents('list.json', json_encode($map));
 echo json_encode(['map' => $map, 'len' => count($map)]);
