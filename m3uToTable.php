@@ -16,18 +16,18 @@
  *      
  */
 
- $file = "all-20200109.m3u";
- $list = file($file);
- foreach ($list as $k => $v) {
-     if ($k == 0) continue;
-     if ($k % 2 == 1) { //歌曲标题和时长
+$file = "all-20200109.m3u";
+$list = file($file);
+foreach ($list as $k => $v) {
+    if ($k == 0) continue;
+    if ($k % 2 == 1) { //歌曲标题和时长
 
-     } else { //文件路径
+    } else { //文件路径
 
-     }
- }
+    }
+}
 
 
- //@todo: 建立起 文件路径与最终http上传路径的对应表
- //@todo：将播放列表名称视为歌曲特性标签，保存到  歌曲Id-标签  对应表
- //@todo：
+//@todo: 建立起 文件路径与最终http上传路径的对应表
+//@todo：将播放列表名称视为歌曲特性标签，保存到  歌曲Id-标签  对应表
+//@todo：
