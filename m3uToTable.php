@@ -30,4 +30,4 @@ foreach ($list as $k => $v) {
 
 //@todo: 建立起 文件路径与最终http上传路径的对应表
 //@todo：将播放列表名称视为歌曲特性标签，保存到  歌曲Id-标签  对应表
-//@todo：
+//@todo：需要获取歌曲meta的API
