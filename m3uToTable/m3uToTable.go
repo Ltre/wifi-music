@@ -1,4 +1,4 @@
-// package main
+package main
 
 // import (
 // 	"fmt"
@@ -18,3 +18,8 @@
 // func main() {
 // 	fmt.Println("mtt")
 // }
+
+
+func main(){
+	//for
+}
