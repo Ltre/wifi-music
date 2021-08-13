@@ -18,12 +18,18 @@
 
 $file = "all-20200109.m3u";
 $list = file($file);
+$playlist = [];
 foreach ($list as $k => $v) {
+    $playIndex = ceil($k / 2);
     if ($k == 0) continue;
     if ($k % 2 == 1) { //歌曲标题和时长
-
+        $dur = $name = null;
+        if (preg_match('/^\s*#EXTINF\s*\:\s*(\d+),(.*)$/', trim("\r\n\s", $v), $matches)) {
+            list ( , $dur, $name) = $matches;
+        }
+        $playlist[$playIndex] += ['dur' => $dur ?: 0, 'name' => $name ?: $v];
     } else { //文件路径
-
+        $playlist[$playIndex]['path'] = trim("\r\n\s", $v);
     }
 }
 
