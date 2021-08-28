@@ -91,12 +91,24 @@ class M3uToTable {
                 'bitrate' => '', //@todo getBitrate($v['path'])
                 'size' => @filesize($v['path']) ?: 0,
             ];
-            if (! $modelS->find($cond)) {
-                $modelS->insert($cond + $data);
+            $song = $modelS->find($cond);
+            if (! $song) {
+                $songId = $modelS->insert($cond + $data);
             } else {
-                $this->update($cond, $data);
+                $modelS->update($cond, $data);
+                $songId = $song['id'];
             }
+            $this->_setTag($songId, $tag);
             $this->log('import', print_r($cond + $data, 1));
+        }
+    }
+
+
+    private function _setTag($id, $tag){
+        $conds = ['song_id' => $id, 'tag' => $tag];
+        $modelT = $this->sqlite['song_tag'];
+        if (! $modelT->find($conds)) {
+            $modelT->insert($conds);
         }
     }
     
