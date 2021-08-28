@@ -10,6 +10,7 @@ class M3uToTable {
     
     var $batch;
     var $http;
+    var $model;
     var $sqlite;
     
     function __construct(){
@@ -25,8 +26,8 @@ class M3uToTable {
             'song_tag' => new Model("sqlite/MyMusicolet.db", 'song_tag'),
             'hist' => new Model("sqlite/MyMusicolet.db", 'hist'),
         ];
-        $model = new Model("sqlite/MyMusicolet.db", 'song');
-        $model->query("create table if not exists song (
+        $this->model = new Model("sqlite/MyMusicolet.db", 'song');
+        $this->model->query("create table if not exists song (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             filepath TEXT DEFAULT NULL,
             s10p_filepath TEXT DEFAULT NULL,
@@ -37,12 +38,12 @@ class M3uToTable {
             bitrate INTEGER DEFAULT 0,
             size INTEGER DEFAULT 0
         )");
-        $model->query("create table if not exists `song_tag` (
+        $this->model->query("create table if not exists `song_tag` (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             song_id INTEGER,
             tag INTEGER
         )");
-        $model->query("create table if not exists `hist` (
+        $this->model->query("create table if not exists `hist` (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             song_id INTEGER,
             playtime INTEGER DEFAULT 0
@@ -75,24 +76,27 @@ class M3uToTable {
     }
     
     
-    // php M3uToTable.php import 'ALL' '../all-20200109.sql'
+    // php M3uToTable.php import 'ALL' '../all-20200109.m3u'
     function import($tag, $m3ufile){
         $playlist = $this->anaM3u($m3ufile);
         $modelS = $this->sqlite['song'];
         foreach ($playlist as $v) {
-            if (! $modelS->find(['s10p_filepath' => $v['path']])) {
-                $data = [
-                    'filepath' => '',//@todo 等待上传后得到公网链接
-                    'title' => $v['name'],
-                    'album' => '', //@todo getAlbum($v['path'])
-                    'album_artist' => '', //@todo getAlbumArtist($v['path'])
-                    'duration' => $v['dur'],
-                    'bitrate' => '', //@todo getBitrate($v['path'])
-                    'size' => @filesize($v['path']) ?: 0,
-                ];
-                $modelS->insert($data);
-                $this->log('import', print_r($data, 1));
+            $cond = ['s10p_filepath' => $v['path']];
+            $data = [
+                'filepath' => '',//@todo 等待上传后得到公网链接
+                'title' => $v['name'],
+                'album' => '', //@todo getAlbum($v['path'])
+                'album_artist' => '', //@todo getAlbumArtist($v['path'])
+                'duration' => $v['dur'],
+                'bitrate' => '', //@todo getBitrate($v['path'])
+                'size' => @filesize($v['path']) ?: 0,
+            ];
+            if (! $modelS->find($cond)) {
+                $modelS->insert($cond + $data);
+            } else {
+                $this->update($cond, $data);
             }
+            $this->log('import', print_r($cond + $data, 1));
         }
     }
     
@@ -104,7 +108,7 @@ class M3uToTable {
     
     
     function sql($sql){
-        $ret = print_r($this->sqlite->query($sql), 1);
+        $ret = print_r($this->model->query($sql), 1);
         $this->log('sql', "sql: {$sql}\nret: {$ret}");
         echo $ret;
     }
