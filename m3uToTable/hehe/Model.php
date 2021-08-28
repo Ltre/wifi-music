@@ -144,6 +144,7 @@ class Model{
             $this->db_instance = 'sqlite';    
         }
 		Model::$_db[$this->db_instance] = new PDO("sqlite:{$this->dbFile}");
+		Model::$_db[$this->db_instance]->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 	}
 
 	private function _bindParams($sql, $params=array()){

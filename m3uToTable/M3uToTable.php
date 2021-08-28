@@ -19,33 +19,45 @@ class M3uToTable {
     
     
     function initDB(){
-        @mkdir('collect');
+        @mkdir('sqlite');
         $this->sqlite = [
             'song' => new Model("sqlite/MyMusicolet.db", 'song'),
             'song_tag' => new Model("sqlite/MyMusicolet.db", 'song_tag'),
             'hist' => new Model("sqlite/MyMusicolet.db", 'hist'),
         ];
-        $model = new Model("sqlite/MyMusicolet.db");
-        $model->query("create table if not exists `song` (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `filepath` TEXT NULL,
-            `s10p_filepath` TEXT NULL,
-            `title` VARCHAR(255) NULL,
-            `album` VARCHAR(255) NULL,
-            `album_artist` VARCHAR(255) NULL,
-            `duration` INTEGER 0,
-            `bitrate` INTEGER 0,
-            `size` INTEGER 0
+// print_r($this->sqlite);die;//debug
+        $model = new Model("sqlite/MyMusicolet.db", 'song');
+// $model->query("create table if not exists song (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     filepath TEXT DEFAULT NULL,
+//     s10p_filepath TEXT DEFAULT NULL,
+//     title VARCHAR(255) DEFAULT NULL,
+//     album VARCHAR(255) DEFAULT NULL,
+//     album_artist VARCHAR(255) DEFAULT NULL,
+//     duration INTEGER DEFAULT 0,
+//     bitrate INTEGER DEFAULT 0,
+//     size INTEGER DEFAULT 0
+// )");die;//debug
+        $model->query("create table if not exists song (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filepath TEXT DEFAULT NULL,
+            s10p_filepath TEXT DEFAULT NULL,
+            title VARCHAR(255) DEFAULT NULL,
+            album VARCHAR(255) DEFAULT NULL,
+            album_artist VARCHAR(255) DEFAULT NULL,
+            duration INTEGER DEFAULT 0,
+            bitrate INTEGER DEFAULT 0,
+            size INTEGER DEFAULT 0
         )");
         $model->query("create table if not exists `song_tag` (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `song_id` INTEGER,
-            `tag` INTEGER
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            song_id INTEGER,
+            tag INTEGER
         )");
         $model->query("create table if not exists `hist` (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `song_id` INTEGER,
-            `playtime` INTEGER 0
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            song_id INTEGER,
+            playtime INTEGER DEFAULT 0
         )");
     }
 
@@ -58,12 +70,12 @@ class M3uToTable {
             if ($k == 0) continue;
             if ($k % 2 == 1) { //歌曲标题和时长
                 $dur = $name = null;
-                if (preg_match('/^\s*#EXTINF\s*\:\s*(\d+),(.*)$/', trim("\r\n\s", $v), $matches)) {
+                if (preg_match('/^\s*#EXTINF\s*\:\s*(\d+),(.*)$/', trim($v, "\r\n\s"), $matches)) {
                     list ( , $dur, $name) = $matches;
                 }
-                $playlist[$playIndex] += ['dur' => $dur ?: 0, 'name' => $name ?: $v];
+                $playlist[$playIndex] = ['dur' => $dur ?: 0, 'name' => $name ?: $v];
             } else { //文件路径
-                $playlist[$playIndex]['path'] = trim("\r\n\s", $v);
+                $playlist[$playIndex]['path'] = trim($v, "\r\n\s");
             }
         }
         return $playlist;
@@ -75,11 +87,13 @@ class M3uToTable {
     }
     
     
+    // php M3uToTable.php import 'ALL' '../all-20200109.sql'
     function import($tag, $m3ufile){
         $playlist = $this->anaM3u($m3ufile);
         $modelS = $this->sqlite['song'];
+// print_r($playlist);die;
         foreach ($playlist as $v) {
-            if (! $models->find(['s10p_filepath' => $v['path']])) {
+            if (! $modelS->find(['s10p_filepath' => $v['path']])) {
                 $data = [
                     'filepath' => '',//@todo 等待上传后得到公网链接
                     'title' => $v['name'],
@@ -87,7 +101,7 @@ class M3uToTable {
                     'album_artist' => '', //@todo getAlbumArtist($v['path'])
                     'duration' => $v['dur'],
                     'bitrate' => '', //@todo getBitrate($v['path'])
-                    'size' => filesize($v['path']),
+                    'size' => @filesize($v['path']) ?: 0,
                 ];
                 $modelS->insert($data);
                 $this->log('import', print_r($data, 1));
@@ -112,13 +126,14 @@ class M3uToTable {
 
 @$func = $_SERVER['argv'][1];
 @$param2 = $_SERVER['argv'][2];
+@$param3 = $_SERVER['argv'][3];
 
 switch ($func) {
     case 'sql':
         $params = [$param2];
         break;
     case 'import':
-        $params = [$param2];
+        $params = [$param2, $param3];
         break;
     default:
         die('wtf');
