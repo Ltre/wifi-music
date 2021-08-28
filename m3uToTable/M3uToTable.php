@@ -147,8 +147,10 @@ if ($func) {
     call_user_func_array([$finder, $func], $params);
 }
 
+//example: /usr/local/php/bin/php M3uToTable.php sql "select * from song, (select song_id, count(1) as cnt from song_tag group by song_id) AS tmptable where song.id = tmptable.song_id order by tmptable.cnt DESC"
 //example: /usr/local/php/bin/php M3uToTable.php sql "select count(1),keywords from video where status != -9 and can_play=1 group by keywords"
 //example: /usr/local/php/bin/php M3uToTable.php import "all-20200109.m3u"
+
 
 //导出到HTML的操作：
 //先执行: /usr/local/php/bin/php M3uToTable.php sql "select *, 'http://cloud.v.duowan.com/index.php?r=public/play&vid='||vid as backurl, 'http://video.duowan.com/play/'||vid||'.html' as playurl from video where status != -9" > video.export.20180712-1.txt
