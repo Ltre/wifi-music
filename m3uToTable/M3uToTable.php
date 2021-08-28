@@ -147,7 +147,7 @@ if ($func) {
     call_user_func_array([$finder, $func], $params);
 }
 
-//example: 获取每首歌曲已打标签数： select song_id, count(1) as cnt from song_tag group by song_id HAVING cnt > 1
+//example: 获取每首歌曲已打标签数： select song_id, count(1) as cnt from song_tag group by song_id -- HAVING cnt > 1
 //example: 获取至少有两个标签（1个ALL,1个别的）的歌曲：/usr/local/php/bin/php M3uToTable.php sql "select * from song, (select song_id, count(1) as cnt from song_tag group by song_id HAVING cnt > 1) AS tmptable where song.id = tmptable.song_id order by tmptable.cnt DESC"
 //example: 获取只有ALL标签的歌曲（可以看作没打标签的）：/usr/local/php/bin/php M3uToTable.php sql "select * from song, song_tag where song.id = song_tag.song_id and song_tag.tag = 'ALL' "
 //example: /usr/local/php/bin/php M3uToTable.php sql "select count(1),keywords from video where status != -9 and can_play=1 group by keywords"
