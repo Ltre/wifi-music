@@ -41,6 +41,7 @@ CREATE TABLE `hist` (
 
 
 -- 以下是查询范例 --
+-- Android推荐使用SqlitePrime软件执行查询
 
 
 -- 获取每首歌曲已打标签数： 
