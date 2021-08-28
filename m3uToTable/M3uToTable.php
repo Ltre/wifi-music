@@ -25,19 +25,7 @@ class M3uToTable {
             'song_tag' => new Model("sqlite/MyMusicolet.db", 'song_tag'),
             'hist' => new Model("sqlite/MyMusicolet.db", 'hist'),
         ];
-// print_r($this->sqlite);die;//debug
         $model = new Model("sqlite/MyMusicolet.db", 'song');
-// $model->query("create table if not exists song (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     filepath TEXT DEFAULT NULL,
-//     s10p_filepath TEXT DEFAULT NULL,
-//     title VARCHAR(255) DEFAULT NULL,
-//     album VARCHAR(255) DEFAULT NULL,
-//     album_artist VARCHAR(255) DEFAULT NULL,
-//     duration INTEGER DEFAULT 0,
-//     bitrate INTEGER DEFAULT 0,
-//     size INTEGER DEFAULT 0
-// )");die;//debug
         $model->query("create table if not exists song (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             filepath TEXT DEFAULT NULL,
@@ -91,7 +79,6 @@ class M3uToTable {
     function import($tag, $m3ufile){
         $playlist = $this->anaM3u($m3ufile);
         $modelS = $this->sqlite['song'];
-// print_r($playlist);die;
         foreach ($playlist as $v) {
             if (! $modelS->find(['s10p_filepath' => $v['path']])) {
                 $data = [
