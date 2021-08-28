@@ -1,3 +1,4 @@
+php M3uToTable.php import 'ALL' '../musicolet/ALL.m3u'
 php M3uToTable.php import 'AlarmClock' '../musicolet/AlarmClock.m3u'
 php M3uToTable.php import 'Epic' '../musicolet/Epic.m3u'
 php M3uToTable.php import 'Public' '../musicolet/Public.m3u'
