@@ -45,7 +45,7 @@ CREATE TABLE `hist` (
 
 
 -- 获取每首歌曲已打标签数： 
-select song.*, tmptable.cnt from song, (select song_id, count(1) as cnt from song_tag group by song_id) AS tmptable order by tmptable.cnt desc, song.id asc
+select song.*, tmptable.cnt from song, (select song_id, count(1) as cnt from song_tag group by song_id) AS tmptable where song.id = tmptable.song_id order by tmptable.cnt desc, song.id asc
 -- 获取至少有两个标签（1个ALL,1个别的）的歌曲：
 select * from song, (select song_id, count(1) as cnt from song_tag group by song_id HAVING cnt > 1) AS tmptable where song.id = tmptable.song_id order by tmptable.cnt DESC
 -- 获取只有ALL标签的歌曲（可以看作没打标签的）：
